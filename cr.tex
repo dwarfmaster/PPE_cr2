@@ -95,9 +95,15 @@ Après avoir lancé ces tests en boucles, il ressort que pour avoir une précisi
 Nous allons centrer notre étude sur deux capteurs, afin de voir ce que nous pouvons obtenir. Nous nommons les capteurs $c_1$ et $c_2$. Nous avons les distance $d_1$ et $d_2$ entre le smartphone et ces capteurs ainsi que $I$ l'intensité initiale du flux, que nous ne connaissons pas. Les intensités que nous mesurons sur les capteurs sont $I_1=I*d_1^{-2}$ et $I_2=I*d_2^{-2}$. Afin de supprimer les $I$ (valeur inconnue), nous allons nous intéresser au rapport :
 \[ \frac{I_1}{I_2} = \frac{d_2^2}{d_1^2} \Leftrightarrow k=\sqrt{\frac{I_1}{I_2}}=\frac{d_2}{d_1} \]
 
-Afin de déterminer quel genre d'équation nous allons obtenir, nous utilisons un programme qui dessine une forme géométrique telle que $\frac{d_1}{d_2} = cte$. Après différents tests, nous conjecturons qu'il s'agit d'un cercle.
+Afin de déterminer quel genre d'équation nous allons obtenir, nous utilisons un programme qui dessine une forme géométrique telle que $\frac{d_1}{d_2} = cte$. Après différents tests, nous conjecturons qu'il s'agit d'un cercle (voir figure \ref{circle}). Cependant, nous n'avons pas réussit à la démontrer mathématiquement, ni à trouver les formules pour extraire les coordonnées précises d'un ensemble de capteurs et de constantes.
 
-% TODO insérer des images et conclusions de calculs
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.75\linewidth]{rcs/circle.png}
+    \end{center}
+    \caption{Formes d'équation paramétrique $\frac{d_1}{d_2}=cte$.}
+    \label{circle}
+\end{figure}
 
 \paragraph{Limites} Cette approche est trop difficile d'un point de vue mathématiques à mettre en œuvre, elle peut cependant permettre de suivre l'utilisateur avec des instructions simples de type gauche/droite. Mais la mise en place technique est gênée par la difficulté de trouver des capteurs d'intensité d'onde électromagnétique à exploiter.
 
@@ -111,7 +117,15 @@ Pour l'instant, deux approches ont été explorées : la stéréo vision et une 
 \subsection{Stéréo vision.}
 \paragraph{Principe.} L'idée de la stéréo vision est d'utiliser deux ou plus caméras (deux dans notre cas), et à partir des caractéristiques et positions des caméras, déduire la position dans l'espace de tout point présent sur les deux caméras. L'objectif étant d'obtenir une carte de disparité, présentant la profondeur de chaque pixel par un niveau de gris. La figure \ref{disparity} montre un exemple de carte de disparité parfaite.
 
-% TODO Figure disparity
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{cc}
+            \includegraphics[width=0.4\linewidth]{rcs/tsukuba.png} & \includegraphics[width=0.4\linewidth]{rcs/tsukuba_disp.png} \\
+        \end{tabular}
+    \end{center}
+    \caption{\emph{Tsukuba} source et sa \emph{dense disparity map}.}
+    \label{disparity}
+\end{figure}
 
 \paragraph{Calibration des caméras.}
 L'étape de calibration est nécessaire pour permettre une détection de la profondeur en temps réel. Pour comprendre ce fait, il faut étudier le modèle d'une caméra : une caméra est modélisée par un point et un plan. L'image d'un point de l'espace est l'intersection entre le plan de la caméra et la droite passant par le centre de la caméra et ce point (voir figure \ref{projection}).
@@ -167,8 +181,15 @@ Une fois les images alignées, la calcul de la carte de disparité est relativem
 \paragraph{Expérience} %TODO
 
 \subsection{Approche ABOD.}
-L'idée de cet algorithme est d'identifier l'apparence du sol sur le flux vidéo d'une caméra et à partir de là de différentier le sol des obstacles en se basant sur leur apparence. Cette algorithme possède quelques limites cependant : un obstacle comme un bord de table apparaissant dans un coin sera repéré comme un objet éloigné. En général, un obstacle \emph{volant} sera considéré comme au sol mais éloigné.
-% TODO figure résultats théoriques
+L'idée de cet algorithme est d'identifier l'apparence du sol sur le flux vidéo d'une caméra et à partir de là de différentier le sol des obstacles en se basant sur leur apparence (un exemple de résultat peut être observé sur la figure \ref{abod}). Cette algorithme possède quelques limites cependant : un obstacle comme un bord de table apparaissant dans un coin sera repéré comme un objet éloigné. En général, un obstacle \emph{volant} sera considéré comme au sol mais éloigné.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=0.8\linewidth]{rcs/abod.png}
+    \end{center}
+    \caption{Résultat de l'application d'un algorithme de type \emph{Appearance based obstacle detection}.}
+    \label{abod}
+\end{figure}
 
 % TODO détailler le principe
 
