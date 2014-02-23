@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
-\usepackage[top=2cm,bottom=2cm,left=3cm,right=3cm]{geometry}
+\usepackage[top=2cm,bottom=2cm,left=2cm,right=2cm]{geometry}
 \usepackage{tabularx}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -176,12 +176,36 @@ Pour faire ça, nous allons tirer partit d'une propriété très intéressante d
 Cependant, il est impossible de placer les caméras de manière parfaite manuellement. Nous allons donc devoir calculer des matrices qui alignerons les images. Pour ce faire, il faut placer des points dont on connait les coordonnées dans les deux images et étudier la distorsion et le décalage. Ces points sont obtenus grâce à un échiquier, dont les points sont faciles à discerner. Une fois ces matrices obtenus, il est possible de calculer la carte de disparité (\emph{disparity map}) des images des deux caméras, qui nous donnera des informations sur la profondeur.
 
 \paragraph{Calcul de la carte de disparité.}
-Une fois les images alignées, la calcul de la carte de disparité est relativement simple puisque pris en charge par \emph{OpenCV}. Cependant, nous ne pouvons pas avoir une précision énorme, et il nous obtenons juste une image en niveau de gris, inexploitable en elle même.
+Une fois les images alignées, la calcul de la carte de disparité est relativement simple puisque pris en charge par \emph{openCV}. Cependant, nous ne pouvons pas avoir une précision énorme, et il nous obtenons juste une image en niveau de gris, inexploitable en elle même. Cette carte de disparité est ensuite découpée en case, et la distance la plus proche de chaque case est calculée, afin d'être utilisé par l'algorithme de calcul de la trajectoire.
 
-\paragraph{Expérience} %TODO
+\paragraph{Expérience} Afin de calibrer les caméras, nous utilisons une image d'échiquier que nous enregistrons sous plusieurs angle avec les deux caméras (exemple figure \ref{chess}). Nous utilisons ensuite un programme qui va détecter les coins des échiquiers dans ces images et en déduire les matrices nécessaires et qui va les stocker dans un fichier xml. Ce fichier xml sera ensuite chargé par un autre programme qui va utiliser ces matrices pour projeter les images des deux caméras, afin qu'un point sur l'une soit aligné avec le même point l'autre image. Il va ensuite utiliser l'algorithme dit de \emph{block matching} implémenté par \emph{openCV}. Il nous permet d'obtenir les cartes de disparité de chaque couple. Quelques résultats obtenus sont montrés dans la figure \ref{disp_result}. On constate que même si les résultats sont relativement bons, dans certains cas, le bruit est trop fort. Les résultats sont donc trop peu fiables pour pouvoir être exploités systématiquement. Ce problème nous a poussé à rechercher une autre approche du problème de la détection d'obstacles.
+
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{cc}
+            \includegraphics[width=0.4\linewidth]{rcs/chess0l.png} & \includegraphics[width=0.4\linewidth]{rcs/chess0r.png} \\
+            \includegraphics[width=0.4\linewidth]{rcs/chess1l.png} & \includegraphics[width=0.4\linewidth]{rcs/chess1r.png} \\
+        \end{tabular}
+    \end{center}
+    \caption{Exemple de couples d'images utilisés pour détecter les coins de l'échiquier.}
+    \label{chess}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{ccc}
+            \textbf{Caméra gauche} & \textbf{Caméra droite} & \textbf{Carte de disparité} \\
+            \includegraphics[width=0.3\linewidth]{rcs/rem0l.png} & \includegraphics[width=0.3\linewidth]{rcs/rem0r.png} & \includegraphics[width=0.3\linewidth]{rcs/disp0.png} \\
+            \includegraphics[width=0.3\linewidth]{rcs/rem1l.png} & \includegraphics[width=0.3\linewidth]{rcs/rem1r.png} & \includegraphics[width=0.3\linewidth]{rcs/disp1.png} \\
+            \includegraphics[width=0.3\linewidth]{rcs/rem2l.png} & \includegraphics[width=0.3\linewidth]{rcs/rem2r.png} & \includegraphics[width=0.3\linewidth]{rcs/disp2.png} \\
+        \end{tabular}
+    \end{center}
+    \caption{Résultats obtenus avec la stéréovision.}
+    \label{disp_result}
+\end{figure}
 
 \subsection{Approche ABOD.}
-L'idée de cet algorithme est d'identifier l'apparence du sol sur le flux vidéo d'une caméra et à partir de là de différentier le sol des obstacles en se basant sur leur apparence (un exemple de résultat peut être observé sur la figure \ref{abod}). Cette algorithme possède quelques limites cependant : un obstacle comme un bord de table apparaissant dans un coin sera repéré comme un objet éloigné. En général, un obstacle \emph{volant} sera considéré comme au sol mais éloigné.
+\paragraph{Principe} L'idée de cet algorithme est d'identifier l'apparence du sol sur le flux vidéo d'une caméra et à partir de là de différentier le sol des obstacles en se basant sur leur apparence (un exemple de résultat peut être observé sur la figure \ref{abod}). Cette algorithme possède quelques limites cependant : un obstacle comme un bord de table apparaissant dans un coin sera repéré comme un objet éloigné. En général, un obstacle \emph{volant} sera considéré comme au sol mais éloigné.
 
 \begin{figure}
     \begin{center}
@@ -191,7 +215,7 @@ L'idée de cet algorithme est d'identifier l'apparence du sol sur le flux vidéo
     \label{abod}
 \end{figure}
 
-% TODO détailler le principe
+\paragraph{Algorithme} L'idée de l'algorithme est assez simple : le sol est identifié par un histogramme, et chaque pixel de l'image est comparé à l'histogramme selon certains critères et sera classé comme appartenant au sol ou comme étant un obstacle. Afin d'affiner la détection, on décide de travailler dans l'espace de couleur \emph{HSV} et d'utiliser un procédé d'apprentissage. Lors de l'apprentissage, plusieures images du sol seront analysées par un programme qui combinera leurs histogrammes et enregistrera l'histogramme résultant dans un fichier xml. Ce fichier sera chargé par le robot qui l'utilisera pour différencier le sol des obstacles. Il ne peut donc fonctionner que sur un seul type de sol, ce qui n'est pas particulièrement génant, puisqu'il est sensé fonctionner dans un seul lieu.
 
 % TODO expérience et résultats.
 
