@@ -183,6 +183,7 @@ Une fois les images alignées, la calcul de la carte de disparité est relativem
 \begin{figure}
     \begin{center}
         \begin{tabular}{cc}
+            \textbf{Caméra gauche} & \textbf{Caméra droite} \\
             \includegraphics[width=0.4\linewidth]{rcs/chess0l.png} & \includegraphics[width=0.4\linewidth]{rcs/chess0r.png} \\
             \includegraphics[width=0.4\linewidth]{rcs/chess1l.png} & \includegraphics[width=0.4\linewidth]{rcs/chess1r.png} \\
         \end{tabular}
@@ -200,7 +201,7 @@ Une fois les images alignées, la calcul de la carte de disparité est relativem
             \includegraphics[width=0.3\linewidth]{rcs/rem2l.png} & \includegraphics[width=0.3\linewidth]{rcs/rem2r.png} & \includegraphics[width=0.3\linewidth]{rcs/disp2.png} \\
         \end{tabular}
     \end{center}
-    \caption{Résultats obtenus avec la stéréovision.}
+    \caption{Résultats obtenus avec la stéréo vision.}
     \label{disp_result}
 \end{figure}
 
@@ -215,9 +216,24 @@ Une fois les images alignées, la calcul de la carte de disparité est relativem
     \label{abod}
 \end{figure}
 
-\paragraph{Algorithme} L'idée de l'algorithme est assez simple : le sol est identifié par un histogramme, et chaque pixel de l'image est comparé à l'histogramme selon certains critères et sera classé comme appartenant au sol ou comme étant un obstacle. Afin d'affiner la détection, on décide de travailler dans l'espace de couleur \emph{HSV} et d'utiliser un procédé d'apprentissage. Lors de l'apprentissage, plusieures images du sol seront analysées par un programme qui combinera leurs histogrammes et enregistrera l'histogramme résultant dans un fichier xml. Ce fichier sera chargé par le robot qui l'utilisera pour différencier le sol des obstacles. Il ne peut donc fonctionner que sur un seul type de sol, ce qui n'est pas particulièrement génant, puisqu'il est sensé fonctionner dans un seul lieu.
+\paragraph{Algorithme} L'idée de l'algorithme est assez simple : le sol est identifié par un histogramme, et chaque pixel de l'image est comparé à l'histogramme selon certains critères et sera classé comme appartenant au sol ou comme étant un obstacle. Afin d'affiner la détection, on décide de travailler dans l'espace de couleur \emph{HSV} et d'utiliser un procédé d'apprentissage. Lors de l'apprentissage, plusieurs images du sol seront analysées par un programme qui combinera leurs histogrammes et enregistrera l'histogramme résultant dans un fichier yaml. Ce fichier sera chargé par le robot qui l'utilisera pour différencier le sol des obstacles. Il ne peut donc fonctionner que sur un seul type de sol, ce qui n'est pas particulièrement gênant, puisqu'il est sensé fonctionner dans un seul lieu.
 
-% TODO expérience et résultats.
+\paragraph{Simulation} Afin de tester si le principe de l'algorithme est valable, on crée à l'aide du logiciel \emph{Blender} un environnement virtuel qui possède toutes les caractéristiques nécessaires : un sol unit et uniforme, plat, et des obstacles de couleur différente. Les résultats, certains exposés dans la figure \ref{abod_simu}, sont plus que satisfaisants, avec très peu de faux positifs et presque aucun faux négatifs.
+
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{cc}
+            \textbf{Caméra} & \textbf{Résultat} \\
+            \includegraphics[width=0.4\linewidth]{rcs/abodv0s.png} & \includegraphics[width=0.4\linewidth]{rcs/abodv0r.png} \\
+            \includegraphics[width=0.4\linewidth]{rcs/abodv1s.png} & \includegraphics[width=0.4\linewidth]{rcs/abodv1r.png} \\
+            \includegraphics[width=0.4\linewidth]{rcs/abodv2s.png} & \includegraphics[width=0.4\linewidth]{rcs/abodv2r.png} \\
+        \end{tabular}
+    \end{center}
+    \caption{Résultats de l'approche \emph{ABOD} dans l'environnement virtuel.}
+    \label{abod_simu}
+\end{figure}
+
+% TODO expérience
 
 \section{Conclusion.}
 Du aux limites de nos capacités techniques, mathématiques et temporelles, de nombreux compromis ont du être fait. Cependant, il reste envisageable d'avoir un prototype fonctionnel bien que limité d'ici la fin de l'année.
