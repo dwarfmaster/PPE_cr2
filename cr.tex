@@ -218,7 +218,7 @@ Une fois les images alignées, la calcul de la carte de disparité est relativem
 
 \paragraph{Algorithme} L'idée de l'algorithme est assez simple : le sol est identifié par un histogramme, et chaque pixel de l'image est comparé à l'histogramme selon certains critères et sera classé comme appartenant au sol ou comme étant un obstacle. Afin d'affiner la détection, on décide de travailler dans l'espace de couleur \emph{HSV} et d'utiliser un procédé d'apprentissage. Lors de l'apprentissage, plusieurs images du sol seront analysées par un programme qui combinera leurs histogrammes et enregistrera l'histogramme résultant dans un fichier yaml. Ce fichier sera chargé par le robot qui l'utilisera pour différencier le sol des obstacles. Il ne peut donc fonctionner que sur un seul type de sol, ce qui n'est pas particulièrement gênant, puisqu'il est sensé fonctionner dans un seul lieu.
 
-\paragraph{Simulation} Afin de tester si le principe de l'algorithme est valable, on crée à l'aide du logiciel \emph{Blender} un environnement virtuel qui possède toutes les caractéristiques nécessaires : un sol unit et uniforme, plat, et des obstacles de couleur différente. Les résultats, certains exposés dans la figure \ref{abod_simu}, sont plus que satisfaisants, avec très peu de faux positifs et presque aucun faux négatifs.
+\paragraph{Simulation} Afin de tester si le principe de l'algorithme est valable, on crée à l'aide du logiciel \emph{Blender} un environnement virtuel qui possède toutes les caractéristiques nécessaires : un sol unit et uniforme, plat, et des obstacles de couleur différente. Les résultats, certains exposés dans la figure \ref{abod_simu}, sont plus que satisfaisants, avec très peu de faux positifs et presque aucun faux négatifs. On observe que l'algorithme résiste bien aux \emph{tâches} de lumière spéculaire, en ne les marquant pas comme obstacle.
 
 \begin{figure}
     \begin{center}
@@ -237,6 +237,11 @@ Une fois les images alignées, la calcul de la carte de disparité est relativem
 
 \section{Conclusion.}
 Du aux limites de nos capacités techniques, mathématiques et temporelles, de nombreux compromis ont du être fait. Cependant, il reste envisageable d'avoir un prototype fonctionnel bien que limité d'ici la fin de l'année.
+
+\newpage
+\appendix
+\section{Liste des figures.}
+\listoffigures
 
 \end{document}
 
